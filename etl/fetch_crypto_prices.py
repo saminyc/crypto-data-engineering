@@ -21,7 +21,7 @@ def transform_prices(raw_data:dict)->pd.DataFrame:
     df["ingestion_timestamp"]=datetime.now(timezone.utc) # Adding ingestion timestamp
     return df
 
-# Main function to fetch and transform crypto prices
+# Main function to fetch and transform crypto prices to a parquet file
 def main():
     raw_data_fetch=fetch_prices()
     transformed_data=transform_prices(raw_data_fetch)
