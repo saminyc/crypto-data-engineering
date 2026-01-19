@@ -12,8 +12,8 @@ def fetch_prices() -> dict:
     """Fetch crypto prices from CoinGecko API."""
     url = "https://api.coingecko.com/api/v3/simple/price"
     params = {
-        "ids": "bitcoin,ethereum",
-        "vs_currencies": "usd"
+    "ids": "bitcoin,ethereum,solana,cardano,polkadot",
+    "vs_currencies": "usd"
     }
 
     response = requests.get(url, params=params)
@@ -35,9 +35,22 @@ def save_raw_to_s3(raw_data: dict, s3_client):
 
 def transform_prices(raw_data: dict) -> pd.DataFrame:
     """Transform raw JSON into a pandas DataFrame."""
-    df = pd.json_normalize(raw_data)
+
+    # Convert dict-of-dicts into DataFrame
+    df = pd.DataFrame(raw_data).T
+
+    # Rename column
+    df = df.rename(columns={"usd": "price_usd"})
+
+    # Reset index so coin name becomes a column
+    df = df.reset_index().rename(columns={"index": "coin"})
+
+    # Add ingestion timestamp
     df["ingestion_timestamp"] = datetime.now(timezone.utc)
+
     return df
+
+
 
 
 def save_processed_to_s3(df: pd.DataFrame, s3_client):
@@ -49,10 +62,10 @@ def save_processed_to_s3(df: pd.DataFrame, s3_client):
 
     s3_key = (
         f"processed/year={now.year}/month={now.month}/day={now.day}/"
-        "crypto_prices.parquet"
+        f"{local_file}"
     )
 
-    s3_client.upload_file(local_file, BUCKET_NAME, s3_key)
+    s3_client.upload_file(local_file, BUCKET_NAME, s3_key) # upload to s3
 
 
 def main():
