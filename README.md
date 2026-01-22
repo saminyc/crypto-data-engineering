@@ -1,7 +1,7 @@
 # Crypto Price Data Engineering Pipeline
 
 ## Overview
-This project is an end-to-end data engineering pipeline that ingests cryptocurrency price data from a public API, stores raw and processed data in Amazon S3, and enables SQL-based analytics using Amazon Athena.
+This project is an end-to-end data engineering pipeline that ingests cryptocurrency price data from a public API (CoinGecko API), stores raw and processed data in Amazon S3, and enables SQL-based analytics using Amazon Athena.
 
 The goal of the project is to demonstrate core data engineering concepts such as API ingestion, data lake design, Parquet-based storage, partitioning, and serverless analytics on AWS.
 
